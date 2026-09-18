@@ -1,0 +1,10 @@
+{
+  "description": "Enables users to create and manage websites efficiently by providing intuitive tools tailored to streamline web development and design processes.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
