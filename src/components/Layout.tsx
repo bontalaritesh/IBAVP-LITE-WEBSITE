@@ -33,6 +33,7 @@ export default function Layout() {
             <Link to="/architecture" className="hover:text-green-400 transition-colors">Architecture</Link>
             <Link to="/threat-log" className="hover:text-green-400 transition-colors">Threat Log</Link>
             <Link to="/features" className="hover:text-green-400 transition-colors">Features</Link>
+            <Link to="/platform" className="hover:text-green-400 transition-colors">Command Platform</Link>
             <Link to="/get-started" className="hover:text-green-400 transition-colors">Get Started</Link>
           </nav>
         </div>

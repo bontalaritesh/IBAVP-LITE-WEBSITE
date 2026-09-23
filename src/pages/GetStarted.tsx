@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useReveal } from '../hooks/useReveal';
 
 const installCommands = [
-  { prompt: '$', cmd: 'git clone https://github.com/your-org/ibvap-lite.git' },
+  { prompt: '$', cmd: 'https://github.com/bontalaritesh/IBVAP-LITE.git' },
   { prompt: '$', cmd: 'cd ibvap-lite' },
   { prompt: '$', cmd: 'pip install -r requirements.txt' },
   { prompt: '$', cmd: 'cp config.example.yaml config.yaml' },

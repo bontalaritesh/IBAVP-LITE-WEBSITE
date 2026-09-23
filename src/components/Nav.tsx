@@ -7,6 +7,7 @@ const links = [
   { to: '/architecture', label: 'Architecture' },
   { to: '/threat-log', label: 'Threat Log' },
   { to: '/features', label: 'Features & Roadmap' },
+  { to: '/platform', label: 'Command Platform' },
 ];
 
 export default function Nav() {

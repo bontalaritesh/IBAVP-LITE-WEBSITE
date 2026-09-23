@@ -1,0 +1,140 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Centralized DEMO DATA for the IBVAP-Lite Command Platform.
+// Everything in this file is SIMULATED for demonstration only.
+// No real cameras, locations, people, or evidence exist behind these records.
+// UI must keep labeling this as DEMO / SIMULATED.
+// ─────────────────────────────────────────────────────────────────────────────
+import type {
+  Camera,
+  Detection,
+  Target,
+  Incident,
+  Evidence,
+  AlertRecord,
+  SystemMetric,
+  ReconstructionStep,
+} from './types';
+
+export const DEMO_CAMERAS: Camera[] = [
+  { id: 'CAM-01', name: 'West Fence Approach', zone: 'West Fence', status: 'ONLINE', fps: 24.1, latencyMs: 92, detections: 5, persons: 2, vehicles: 3, faceRecognition: true, watchlistMatch: false, recording: true, map: { x: 0.14, y: 0.62 }, fov: { heading: 80, spread: 58, range: 0.30 } },
+  { id: 'CAM-02', name: 'North Gate — Primary', zone: 'North Gate', status: 'ALERT', fps: 25.0, latencyMs: 88, detections: 9, persons: 4, vehicles: 5, faceRecognition: true, watchlistMatch: true, recording: true, map: { x: 0.52, y: 0.12 }, fov: { heading: 170, spread: 52, range: 0.26 } },
+  { id: 'CAM-03', name: 'Checkpoint Alpha', zone: 'Checkpoint Alpha', status: 'ONLINE', fps: 23.7, latencyMs: 105, detections: 7, persons: 3, vehicles: 4, faceRecognition: true, watchlistMatch: true, recording: true, map: { x: 0.46, y: 0.42 }, fov: { heading: 130, spread: 64, range: 0.24 } },
+  { id: 'CAM-04', name: 'South Post Ridge', zone: 'South Post', status: 'WARNING', fps: 11.2, latencyMs: 240, detections: 3, persons: 1, vehicles: 2, faceRecognition: true, watchlistMatch: false, recording: true, map: { x: 0.38, y: 0.78 }, fov: { heading: 20, spread: 46, range: 0.28 } },
+  { id: 'CAM-05', name: 'Perimeter East', zone: 'Perimeter East', status: 'ONLINE', fps: 24.6, latencyMs: 96, detections: 6, persons: 2, vehicles: 4, faceRecognition: true, watchlistMatch: false, recording: true, map: { x: 0.82, y: 0.38 }, fov: { heading: 250, spread: 56, range: 0.30 } },
+  { id: 'CAM-06', name: 'Riverbed Overlook', zone: 'Riverbed', status: 'OFFLINE', fps: 0, latencyMs: 0, detections: 0, persons: 0, vehicles: 0, faceRecognition: false, watchlistMatch: false, recording: false, map: { x: 0.68, y: 0.86 }, fov: { heading: 300, spread: 50, range: 0.26 } },
+];
+
+export const DEMO_DETECTIONS: Detection[] = [
+  { id: 'DET-9101', cameraId: 'CAM-02', timestamp: '2026-09-20 13:47:22', objectType: 'PERSON', label: 'person', confidence: 0.97, trackId: 'TRK-014', watchlistMatch: 'Arjun S. (WATCHLIST-007)' },
+  { id: 'DET-9100', cameraId: 'CAM-02', timestamp: '2026-09-20 13:47:20', objectType: 'VEHICLE', label: 'truck', confidence: 0.91, trackId: 'TRK-021' },
+  { id: 'DET-9099', cameraId: 'CAM-03', timestamp: '2026-09-20 13:46:55', objectType: 'PERSON', label: 'person', confidence: 0.88, trackId: 'TRK-014' },
+  { id: 'DET-9098', cameraId: 'CAM-01', timestamp: '2026-09-20 13:45:31', objectType: 'VEHICLE', label: 'car', confidence: 0.94, trackId: 'TRK-019' },
+  { id: 'DET-9097', cameraId: 'CAM-05', timestamp: '2026-09-20 13:44:12', objectType: 'PERSON', label: 'person', confidence: 0.72, trackId: 'TRK-017', watchlistMatch: null },
+  { id: 'DET-9096', cameraId: 'CAM-04', timestamp: '2026-09-20 13:43:02', objectType: 'ANIMAL', label: 'camel', confidence: 0.81, trackId: 'TRK-022' },
+  { id: 'DET-9095', cameraId: 'CAM-03', timestamp: '2026-09-20 13:41:47', objectType: 'VEHICLE', label: 'bus', confidence: 0.89, trackId: 'TRK-018' },
+  { id: 'DET-9094', cameraId: 'CAM-01', timestamp: '2026-09-20 13:40:09', objectType: 'PERSON', label: 'person', confidence: 0.64, trackId: 'TRK-016', watchlistMatch: null },
+];
+
+export const DEMO_TARGETS: Target[] = [
+  {
+    trackId: 'TRK-014', objectType: 'PERSON', label: 'person', confidence: 0.91,
+    firstSeen: '13:38:02', lastSeen: '13:47:22', cameraId: 'CAM-02',
+    direction: 'NE → SW', status: 'ACTIVE', reidStatus: 'MATCH', watchlistName: 'Arjun S. (WATCHLIST-007)',
+    history: [
+      { cameraId: 'CAM-01', timestamp: '13:38:02', confidence: 0.72, note: 'First sighting, fence approach' },
+      { cameraId: 'CAM-03', timestamp: '13:41:47', confidence: 0.88, note: 'Checkpoint pass, frontal face' },
+      { cameraId: 'CAM-02', timestamp: '13:47:22', confidence: 0.97, note: 'Watchlist HIGH match, alert raised' },
+    ],
+    mapTrail: [{ x: 0.14, y: 0.62 }, { x: 0.30, y: 0.52 }, { x: 0.46, y: 0.42 }, { x: 0.50, y: 0.26 }, { x: 0.52, y: 0.12 }],
+  },
+  {
+    trackId: 'TRK-021', objectType: 'VEHICLE', label: 'truck', confidence: 0.91,
+    firstSeen: '13:30:11', lastSeen: '13:47:20', cameraId: 'CAM-02',
+    direction: 'E → W', status: 'ACTIVE', reidStatus: null, watchlistName: null,
+    history: [
+      { cameraId: 'CAM-05', timestamp: '13:30:11', confidence: 0.84, note: 'Entered perimeter road' },
+      { cameraId: 'CAM-03', timestamp: '13:41:47', confidence: 0.89, note: 'Checkpoint stop, plates logged (DEMO)' },
+      { cameraId: 'CAM-02', timestamp: '13:47:20', confidence: 0.91, note: 'Departed north gate' },
+    ],
+    mapTrail: [{ x: 0.82, y: 0.38 }, { x: 0.60, y: 0.44 }, { x: 0.46, y: 0.42 }, { x: 0.52, y: 0.12 }],
+  },
+  {
+    trackId: 'TRK-017', objectType: 'PERSON', label: 'person', confidence: 0.72,
+    firstSeen: '13:44:12', lastSeen: '13:44:40', cameraId: 'CAM-05',
+    direction: 'S → N', status: 'LOST', reidStatus: 'NO-FACE', watchlistName: null,
+    history: [
+      { cameraId: 'CAM-05', timestamp: '13:44:12', confidence: 0.72, note: 'Face obstructed, below match threshold' },
+    ],
+    mapTrail: [{ x: 0.82, y: 0.52 }, { x: 0.82, y: 0.38 }],
+  },
+  {
+    trackId: 'TRK-022', objectType: 'ANIMAL', label: 'camel convoy', confidence: 0.81,
+    firstSeen: '13:43:02', lastSeen: '13:45:58', cameraId: 'CAM-04',
+    direction: 'W → E', status: 'HANDOFF', reidStatus: null, watchlistName: null,
+    history: [
+      { cameraId: 'CAM-01', timestamp: '13:36:20', confidence: 0.66, note: 'Distant silhouette' },
+      { cameraId: 'CAM-04', timestamp: '13:43:02', confidence: 0.81, note: 'Crossing south ridge' },
+    ],
+    mapTrail: [{ x: 0.14, y: 0.70 }, { x: 0.26, y: 0.74 }, { x: 0.38, y: 0.78 }],
+  },
+];
+
+export const DEMO_INCIDENTS: Incident[] = [
+  { id: 'INC-1042', timestamp: '2026-09-20 13:47:22', cameraId: 'CAM-02', zone: 'North Gate', severity: 'CRITICAL', detectedObject: 'PERSON', label: 'person', trackId: 'TRK-014', recognitionStatus: 'WATCHLIST MATCH — HIGH', confidence: 0.97, status: 'NEW', summary: 'Watchlist identity Arjun S. re-appeared at north gate, day 3, same entry corridor. Liveness confirmed.', evidenceIds: ['EV-2081', 'EV-2082'] },
+  { id: 'INC-1041', timestamp: '2026-09-20 13:41:47', cameraId: 'CAM-03', zone: 'Checkpoint Alpha', severity: 'HIGH', detectedObject: 'VEHICLE', label: 'truck', trackId: 'TRK-021', recognitionStatus: 'VEHICLE ONLY', confidence: 0.89, status: 'INVESTIGATING', summary: 'Unplanned truck stop at checkpoint, driver remained in cabin, plates pending manual review (DEMO).', evidenceIds: ['EV-2079'] },
+  { id: 'INC-1040', timestamp: '2026-09-20 13:31:05', cameraId: 'CAM-05', zone: 'Perimeter East', severity: 'MEDIUM', detectedObject: 'PERSON', label: 'person', trackId: 'TRK-017', recognitionStatus: 'UNIDENTIFIED', confidence: 0.72, status: 'ACKNOWLEDGED', summary: 'Person detected with cap obstruction; face-match below threshold. Logged for manual review.', evidenceIds: ['EV-2077'] },
+  { id: 'INC-1039', timestamp: '2026-09-20 12:58:49', cameraId: 'CAM-01', zone: 'West Fence', severity: 'LOW', detectedObject: 'ANIMAL', label: 'camel convoy', trackId: 'TRK-022', recognitionStatus: 'NO FACE', confidence: 0.66, status: 'RESOLVED', summary: 'Animal convoy crossing near west fence; no human activity associated.', evidenceIds: [] },
+  { id: 'INC-1038', timestamp: '2026-09-20 12:14:33', cameraId: 'CAM-02', zone: 'North Gate', severity: 'HIGH', detectedObject: 'PERSON', label: 'person', trackId: 'TRK-014', recognitionStatus: 'WATCHLIST MATCH — HIGH', confidence: 0.93, status: 'RESOLVED', summary: 'Earlier HIGH-tier watchlist match at same gate. Subject left before response team arrival.', evidenceIds: ['EV-2071', 'EV-2072'] },
+  { id: 'INC-1037', timestamp: '2026-09-20 11:42:11', cameraId: 'CAM-04', zone: 'South Post', severity: 'MEDIUM', detectedObject: 'PERSON', label: 'person', trackId: 'TRK-016', recognitionStatus: 'UNIDENTIFIED', confidence: 0.64, status: 'RESOLVED', summary: 'Low-light detection, south ridge. Re-ID not possible (night mode artifacts).', evidenceIds: ['EV-2068'] },
+];
+
+export const DEMO_EVIDENCE: Evidence[] = [
+  { id: 'EV-2081', incidentId: 'INC-1042', kind: 'SNAPSHOT', title: 'Frame grab — CAM-02 gate approach', cameraId: 'CAM-02', timestamp: '2026-09-20 13:47:22', objectType: 'PERSON', targetId: 'TRK-014', sha256: 'demo-9f2c1ab74e0d5f88c3a1e6b2d4f70a9c5e8d1b34', chainOfCustody: 'SEALED', sizeLabel: '336 KB' },
+  { id: 'EV-2082', incidentId: 'INC-1042', kind: 'VIDEO', title: 'Gate approach clip — 50s (live-fire reference)', cameraId: 'CAM-02', timestamp: '2026-09-20 13:47:05', objectType: 'PERSON', targetId: 'TRK-014', sha256: 'demo-77b0c4e19a5d3f60b8e2c1a49d7f30b5c6e8d2a1', chainOfCustody: 'SEALED', sizeLabel: '13.4 MB', durationLabel: '00:00:50' },
+  { id: 'EV-2079', incidentId: 'INC-1041', kind: 'VIDEO', title: 'Checkpoint patrol clip — 51s (patrol reference)', cameraId: 'CAM-03', timestamp: '2026-09-20 13:41:47', objectType: 'VEHICLE', targetId: 'TRK-021', sha256: 'demo-2e8a6d13b7c4f05e9a1b8c3d6f407e5a9b2c1d80', chainOfCustody: 'IN_REVIEW', sizeLabel: '33.1 MB', durationLabel: '00:00:51' },
+  { id: 'EV-2077', incidentId: 'INC-1040', kind: 'SNAPSHOT', title: 'Perimeter east frame grab', cameraId: 'CAM-05', timestamp: '2026-09-20 13:31:05', objectType: 'PERSON', targetId: 'TRK-017', sha256: 'demo-b1f4e8a2c6d9037e5a8b1c4f6d2e09a7b3c5d1f2', chainOfCustody: 'SEALED', sizeLabel: '514 KB' },
+  { id: 'EV-2072', incidentId: 'INC-1038', kind: 'SNAPSHOT', title: 'Earlier gate match crop', cameraId: 'CAM-02', timestamp: '2026-09-20 12:14:33', objectType: 'PERSON', targetId: 'TRK-014', sha256: 'demo-6c3d9a0b8e2f417a5c9d0b3e6f8a1c4b7d2e5f90', chainOfCustody: 'EXPORTED', sizeLabel: '401 KB' },
+  { id: 'EV-2068', incidentId: 'INC-1037', kind: 'METADATA', title: 'Night-mode detection metadata', cameraId: 'CAM-04', timestamp: '2026-09-20 11:42:11', objectType: 'PERSON', targetId: 'TRK-016', sha256: 'demo-a4b7c1d8e3f20695a8b4c1d7e2f809a3b6c5d1e0', chainOfCustody: 'SEALED', sizeLabel: '12 KB' },
+];
+
+export const DEMO_ALERTS: AlertRecord[] = [
+  { id: 'AL-5521', timestamp: '13:47:22', cameraId: 'CAM-02', zone: 'North Gate', severity: 'CRITICAL', person: 'Arjun S. (WATCHLIST-007)', confidence: 0.97, message: 'HIGH match — Telegram push dispatched (DEMO)' },
+  { id: 'AL-5520', timestamp: '13:41:47', cameraId: 'CAM-03', zone: 'Checkpoint Alpha', severity: 'HIGH', person: 'TRK-021 truck', confidence: 0.89, message: 'Unscheduled dwell flagged' },
+  { id: 'AL-5519', timestamp: '13:31:05', cameraId: 'CAM-05', zone: 'Perimeter East', severity: 'MEDIUM', person: 'TRK-017 person', confidence: 0.72, message: 'POSSIBLE tier — soft alert only' },
+  { id: 'AL-5518', timestamp: '12:58:49', cameraId: 'CAM-01', zone: 'West Fence', severity: 'LOW', person: 'TRK-022 animal', confidence: 0.66, message: 'Animal crossing, no action' },
+];
+
+export const DEMO_SYSTEM: SystemMetric = {
+  cpu: 62,
+  ram: 48,
+  inferenceFps: 27.4,
+  latencyMs: 96,
+  storageUsedGb: 412,
+  storageTotalGb: 1024,
+  networkOk: true,
+  models: [
+    { name: 'YOLO26n', status: 'ONLINE', note: 'ONNX Runtime · object detection' },
+    { name: 'InsightFace (ArcFace)', status: 'ONLINE', note: '512-d embeddings · watchlist match' },
+    { name: 'ONNX Runtime', status: 'ONLINE', note: 'CPU execution provider' },
+    { name: 'SQLite Watchlist DB', status: 'ONLINE', note: 'ACID · zero-pickle' },
+    { name: 'Telegram Dispatch', status: 'ONLINE', note: 'Evidence push channel (DEMO)' },
+  ],
+};
+
+export const DEMO_RECONSTRUCTION: ReconstructionStep[] = [
+  { cameraId: 'CAM-01', timestamp: '13:38:02', trackId: 'TRK-014', confidence: 0.72, direction: 'Entering fence approach, heading E', gapLabel: '—' },
+  { cameraId: 'CAM-03', timestamp: '13:41:47', trackId: 'TRK-014', confidence: 0.88, direction: 'Passing checkpoint, heading NE', gapLabel: '00:03:45' },
+  { cameraId: 'CAM-02', timestamp: '13:47:22', trackId: 'TRK-014', confidence: 0.97, direction: 'Stopped at north gate, heading N', gapLabel: '00:05:35' },
+  { cameraId: 'CAM-05', timestamp: '13:52:03', trackId: 'TRK-014', confidence: 0.74, direction: 'Departing east perimeter, heading E', gapLabel: '00:04:41' },
+];
+
+// Camera hand-off chain used by Reconstruction: which cameras plausibly
+// share a line of sight / corridor for the same target (SIMULATED).
+export const DEMO_HANDOFF_GRAPH: Record<string, string[]> = {
+  'CAM-01': ['CAM-03'],
+  'CAM-03': ['CAM-01', 'CAM-02', 'CAM-05'],
+  'CAM-02': ['CAM-03', 'CAM-05'],
+  'CAM-05': ['CAM-02', 'CAM-03'],
+  'CAM-04': ['CAM-01'],
+  'CAM-06': [],
+};
