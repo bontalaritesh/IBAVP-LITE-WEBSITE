@@ -1,229 +1,244 @@
-import { useEffect, useRef, useState } from 'react';
-import { useReveal } from '../hooks/useReveal';
-import { Link } from 'react-router';
+import { useEffect, useRef, useState } from "react"
+import { useReveal } from "../hooks/useReveal"
+import { Link } from "react-router"
 
 interface PipelineStage {
-  id: string;
-  num: string;
-  label: string;
-  tech: string;
-  role: string;
-  latency: string;
-  input: string;
-  output: string;
-  memory: string;
-  details: string[];
-  color: 'blue' | 'green' | 'amber' | 'purple' | 'cyan';
+  id: string
+  num: string
+  label: string
+  tech: string
+  role: string
+  latency: string
+  input: string
+  output: string
+  memory: string
+  details: string[]
+  color: "blue" | "green" | "amber" | "purple" | "cyan"
 }
 
 const pipelineStages: PipelineStage[] = [
   {
-    id: 'edge',
-    num: '01',
-    label: 'Edge Sensor Ingestion',
-    tech: 'RTSP / USB / VideoCapture',
-    role: 'Pulls live video feed from border cameras, IP webcams, or pre-recorded tactical surveillance mp4.',
-    latency: '3.1 ms',
-    input: '1080p / 720p H.264 video stream',
-    output: 'Raw BGR OpenCV frame matrices (640x480)',
-    memory: '12 MB buffer',
+    id: "edge",
+    num: "01",
+    label: "Edge Sensor Ingestion",
+    tech: "RTSP / USB / VideoCapture",
+    role: "Pulls live video feed from border cameras, IP webcams, or pre-recorded tactical surveillance mp4.",
+    latency: "3.1 ms",
+    input: "1080p / 720p H.264 video stream",
+    output: "Raw BGR OpenCV frame matrices (640x480)",
+    memory: "12 MB buffer",
     details: [
-      'Threaded zero-lag frame reader with automatic frame dropping under backlog',
-      'Dual-protocol support: Native RTSP / IP Webcams and USB UVC sensors',
-      'Instant failover to local sensor if remote camera stream drops',
+      "Threaded zero-lag frame reader with automatic frame dropping under backlog",
+      "Dual-protocol support: Native RTSP / IP Webcams and USB UVC sensors",
+      "Instant failover to local sensor if remote camera stream drops",
     ],
-    color: 'blue',
+    color: "blue",
   },
   {
-    id: 'clahe',
-    num: '02',
-    label: 'Night Vision CLAHE',
-    tech: 'Adaptive Histogram Equalization',
-    role: 'Enhances low-light, fog, and dusk footage to recover hidden facial contours and silhouette contrast.',
-    latency: '1.8 ms',
-    input: 'Low-light BGR frame',
-    output: 'Illumination-normalized LAB/BGR frame',
-    memory: '4 MB scratch',
+    id: "clahe",
+    num: "02",
+    label: "Night Vision CLAHE",
+    tech: "Adaptive Histogram Equalization",
+    role: "Enhances low-light, fog, and dusk footage to recover hidden facial contours and silhouette contrast.",
+    latency: "1.8 ms",
+    input: "Low-light BGR frame",
+    output: "Illumination-normalized LAB/BGR frame",
+    memory: "4 MB scratch",
     details: [
-      'Contrast Limited Adaptive Histogram Equalization applied to luminance channel',
-      'Prevents noise over-amplification in dark border perimeter sectors',
-      'Dynamically toggleable via operator HUD dashboard',
+      "Contrast Limited Adaptive Histogram Equalization applied to luminance channel",
+      "Prevents noise over-amplification in dark border perimeter sectors",
+      "Dynamically toggleable via operator HUD dashboard",
     ],
-    color: 'blue',
+    color: "blue",
   },
   {
-    id: 'yolo26',
-    num: '03',
-    label: 'YOLO26n Object Detector',
-    tech: 'Ultralytics YOLO26 Nano (ONNX)',
-    role: 'Performs native NMS-free human and vehicle detection, generating tracked bounding boxes.',
-    latency: '8.2 ms',
-    input: 'Normalized frame tensor (1, 3, 480, 480)',
-    output: 'Class IDs (Person/Vehicle), Bounding Box coords, Confidence',
-    memory: '9.6 MB weights',
+    id: "yolo26",
+    num: "03",
+    label: "YOLO26n Object Detector",
+    tech: "Ultralytics YOLO26 Nano (ONNX)",
+    role: "Performs native NMS-free human and vehicle detection, generating tracked bounding boxes.",
+    latency: "8.2 ms",
+    input: "Normalized frame tensor (1, 3, 480, 480)",
+    output: "Class IDs (Person/Vehicle), Bounding Box coords, Confidence",
+    memory: "9.6 MB weights",
     details: [
-      'Upgraded to YOLO26: Native end-to-end NMS-free design removes post-processing bottleneck',
-      'Only 2.4M parameters (25% smaller than YOLOv8n, 64% fewer GFLOPs)',
-      'Up to 43% faster CPU inference via multi-threaded ONNX Runtime',
+      "Upgraded to YOLO26: Native end-to-end NMS-free design removes post-processing bottleneck",
+      "Only 2.4M parameters (25% smaller than YOLOv8n, 64% fewer GFLOPs)",
+      "Up to 43% faster CPU inference via multi-threaded ONNX Runtime",
     ],
-    color: 'green',
+    color: "green",
   },
   {
-    id: 'arcface',
-    num: '04',
-    label: 'InsightFace Biometrics',
-    tech: 'MobileFaceNet buffalo_sc (512-D)',
-    role: 'Extracts deep normalized biometric facial embeddings from detected head and face crops.',
-    latency: '9.4 ms',
-    input: 'Aligned 112x112 facial crop',
-    output: '512-dimensional normalized float32 vector',
-    memory: '14.2 MB weights',
+    id: "arcface",
+    num: "04",
+    label: "InsightFace Biometrics",
+    tech: "MobileFaceNet buffalo_sc (512-D)",
+    role: "Extracts deep normalized biometric facial embeddings from detected head and face crops.",
+    latency: "9.4 ms",
+    input: "Aligned 112x112 facial crop",
+    output: "512-dimensional normalized float32 vector",
+    memory: "14.2 MB weights",
     details: [
-      '5-point facial landmark alignment with affine warp',
-      'L2-normalized unit sphere embedding for direct cosine similarity dot-product',
-      'High discrimination margin (TAR 99.2% @ FAR 0.001)',
+      "5-point facial landmark alignment with affine warp",
+      "L2-normalized unit sphere embedding for direct cosine similarity dot-product",
+      "High discrimination margin (TAR 99.2% @ FAR 0.001)",
     ],
-    color: 'green',
+    color: "green",
   },
   {
-    id: 'multiangle',
-    num: '05',
-    label: '360° Multi-Angle Gallery',
-    tech: 'Matrix Cosine Exemplar Gallery',
-    role: 'Compares extracted face embedding against multi-angle enrolled exemplar gallery (frontal, 45°, profile).',
-    latency: '0.4 ms',
-    input: 'Query embedding (1, 512)',
-    output: 'Max similarity score across all enrolled angles',
-    memory: '<1 MB RAM',
+    id: "multiangle",
+    num: "05",
+    label: "360° Multi-Angle Gallery",
+    tech: "Matrix Cosine Exemplar Gallery",
+    role: "Compares extracted face embedding against multi-angle enrolled exemplar gallery (frontal, 45°, profile).",
+    latency: "0.4 ms",
+    input: "Query embedding (1, 512)",
+    output: "Max similarity score across all enrolled angles",
+    memory: "<1 MB RAM",
     details: [
-      'Stores (N, 512) exemplar matrices per enrolled identity instead of single averaged vectors',
-      'Matrix multiplication: np.dot(enrolled_matrix, query) -> np.max() identifies from any angle',
-      'Eliminates profile-view rejection flaws inherent in traditional 1-photo systems',
+      "Stores (N, 512) exemplar matrices per enrolled identity instead of single averaged vectors",
+      "Matrix multiplication: np.dot(enrolled_matrix, query) -> np.max() identifies from any angle",
+      "Eliminates profile-view rejection flaws inherent in traditional 1-photo systems",
     ],
-    color: 'cyan',
+    color: "cyan",
   },
   {
-    id: 'liveness',
-    num: '06',
-    label: 'Liveness Heuristic Gate',
-    tech: 'Passive Texture & Micro-Motion',
-    role: 'Rejects spoofing attacks such as printed photos, tablet screens, or replay loops.',
-    latency: '1.2 ms',
-    input: 'Consecutive face crops & landmarks',
-    output: 'Liveness confidence [0.0 - 1.0] (Pass/Fail)',
-    memory: '2 MB history',
+    id: "liveness",
+    num: "06",
+    label: "Liveness Heuristic Gate",
+    tech: "Passive Texture & Micro-Motion",
+    role: "Rejects spoofing attacks such as printed photos, tablet screens, or replay loops.",
+    latency: "1.2 ms",
+    input: "Consecutive face crops & landmarks",
+    output: "Liveness confidence [0.0 - 1.0] (Pass/Fail)",
+    memory: "2 MB history",
     details: [
-      'Frequency domain Fourier analysis detects screen pixel moiré patterns',
-      'Micro-movement and eye blink tracking without requiring active user cooperation',
-      'Prevents adversarial presentation attacks on border checkpoint cameras',
+      "Frequency domain Fourier analysis detects screen pixel moiré patterns",
+      "Micro-movement and eye blink tracking without requiring active user cooperation",
+      "Prevents adversarial presentation attacks on border checkpoint cameras",
     ],
-    color: 'amber',
+    color: "amber",
   },
   {
-    id: 'fastapi',
-    num: '07',
-    label: 'FastAPI Orchestration Bus',
-    tech: 'Python 3.11 + Async WebSockets',
-    role: 'Coordinates detection events, manages per-person alert cooldowns, and streams video frames to operators.',
-    latency: '1.1 ms',
-    input: 'Detection & match records',
-    output: 'High-speed WebSocket telemetry & MJPEG stream',
-    memory: '28 MB RAM',
+    id: "fastapi",
+    num: "07",
+    label: "FastAPI Orchestration Bus",
+    tech: "Python 3.11 + Async WebSockets",
+    role: "Coordinates detection events, manages per-person alert cooldowns, and streams video frames to operators.",
+    latency: "1.1 ms",
+    input: "Detection & match records",
+    output: "High-speed WebSocket telemetry & MJPEG stream",
+    memory: "28 MB RAM",
     details: [
-      'Smart cooldown deduplicator prevents alert flooding while logging continuous audit trails',
-      'Background daemon worker threads decouple AI inference from video streaming',
-      'RESTful OpenAPI endpoints for watchlist CRUD and configuration updates',
+      "Smart cooldown deduplicator prevents alert flooding while logging continuous audit trails",
+      "Background daemon worker threads decouple AI inference from video streaming",
+      "RESTful OpenAPI endpoints for watchlist CRUD and configuration updates",
     ],
-    color: 'purple',
+    color: "purple",
   },
   {
-    id: 'dispatch',
-    num: '08',
-    label: 'Tactical Dispatch & Vault',
-    tech: 'Telegram Bot API + SQLite DB',
-    role: 'Instantly pushes high-priority threat alerts with photo evidence to commanders and logs to encrypted audit vault.',
-    latency: '0.8 ms local',
-    input: 'Confirmed Threat Record + Cropped Evidence JPEG',
-    output: 'Push notification with photo + Permanent SQLite record',
-    memory: 'SQLite database',
+    id: "dispatch",
+    num: "08",
+    label: "Tactical Dispatch & Vault",
+    tech: "Telegram Bot API + SQLite DB",
+    role: "Instantly pushes high-priority threat alerts with photo evidence to commanders and logs to encrypted audit vault.",
+    latency: "0.8 ms local",
+    input: "Confirmed Threat Record + Cropped Evidence JPEG",
+    output: "Push notification with photo + Permanent SQLite record",
+    memory: "SQLite database",
     details: [
-      'Asynchronous background thread dispatches evidence photos with HTML formatted captions',
-      'Immediate field delivery to Telegram private chat or command channel in <1.0s',
-      'Full forensic audit trail persisted locally in ACID SQLite database',
+      "Asynchronous background thread dispatches evidence photos with HTML formatted captions",
+      "Immediate field delivery to Telegram private chat or command channel in <1.0s",
+      "Full forensic audit trail persisted locally in ACID SQLite database",
     ],
-    color: 'purple',
+    color: "purple",
   },
-];
+]
 
 const techStack = [
   {
-    layer: 'Edge Object Detection',
-    tech: 'YOLO26 Nano (ONNX)',
-    alternative: 'Cloud Vision API / YOLOv5',
-    rationale: 'Native NMS-free end-to-end design delivers 43% higher CPU FPS; runs 100% locally with zero subscription cost.',
+    layer: "Edge Object Detection",
+    tech: "YOLO26 Nano (ONNX)",
+    alternative: "Cloud Vision API / YOLOv5",
+    rationale:
+      "Native NMS-free end-to-end design delivers 43% higher CPU FPS; runs 100% locally with zero subscription cost.",
   },
   {
-    layer: 'Biometric Face Match',
-    tech: 'InsightFace MobileFaceNet',
-    alternative: 'dlib / FaceNet',
-    rationale: 'Produces ultra-compact 512-D vectors with state-of-the-art ArcFace angular margin loss and 5-point landmark warp.',
+    layer: "Biometric Face Match",
+    tech: "InsightFace MobileFaceNet",
+    alternative: "dlib / FaceNet",
+    rationale:
+      "Produces ultra-compact 512-D vectors with state-of-the-art ArcFace angular margin loss and 5-point landmark warp.",
   },
   {
-    layer: 'Multi-Angle Exemplars',
-    tech: 'Matrix Cosine Gallery (N, 512)',
-    alternative: 'Single photo vector average',
-    rationale: 'Allows recognition from oblique 45° angles and profile views without feature dilution caused by vector averaging.',
+    layer: "Multi-Angle Exemplars",
+    tech: "Matrix Cosine Gallery (N, 512)",
+    alternative: "Single photo vector average",
+    rationale:
+      "Allows recognition from oblique 45° angles and profile views without feature dilution caused by vector averaging.",
   },
   {
-    layer: 'Inference Engine',
-    tech: 'ONNX Runtime CPUExecutionProvider',
-    alternative: 'PyTorch / TensorRT',
-    rationale: 'Leverages multi-threaded Intel AVX2/AVX-512 SIMD vector instructions; eliminates need for power-hungry GPUs.',
+    layer: "Inference Engine",
+    tech: "ONNX Runtime CPUExecutionProvider",
+    alternative: "PyTorch / TensorRT",
+    rationale:
+      "Leverages multi-threaded Intel AVX2/AVX-512 SIMD vector instructions; eliminates need for power-hungry GPUs.",
   },
   {
-    layer: 'Event Orchestration',
-    tech: 'FastAPI + Starlette WebSockets',
-    alternative: 'Flask / Django',
-    rationale: 'Asynchronous event loop streams 60 FPS video while concurrently processing REST requests and cooldown deduplication.',
+    layer: "Event Orchestration",
+    tech: "FastAPI + Starlette WebSockets",
+    alternative: "Flask / Django",
+    rationale:
+      "Asynchronous event loop streams 60 FPS video while concurrently processing REST requests and cooldown deduplication.",
   },
   {
-    layer: 'Storage & Audit Log',
-    tech: 'Local SQLite (ACID compliant)',
-    alternative: 'MongoDB / PostgreSQL',
-    rationale: 'Zero configuration, single-file portability, zero networking attack surface, and instantaneous write latency.',
+    layer: "Storage & Audit Log",
+    tech: "Local SQLite (ACID compliant)",
+    alternative: "MongoDB / PostgreSQL",
+    rationale:
+      "Zero configuration, single-file portability, zero networking attack surface, and instantaneous write latency.",
   },
   {
-    layer: 'Command Dispatch',
-    tech: 'Telegram Bot API (HTML Push)',
-    alternative: 'SMS / Email Gateway',
-    rationale: 'Delivers high-resolution cropped face snapshots and tactical coordinates directly to mobile phones within 800ms.',
+    layer: "Command Dispatch",
+    tech: "Telegram Bot API (HTML Push)",
+    alternative: "SMS / Email Gateway",
+    rationale:
+      "Delivers high-resolution cropped face snapshots and tactical coordinates directly to mobile phones within 800ms.",
   },
-];
+]
 
 export default function Architecture() {
-  const revealRef = useReveal();
-  const [selectedStage, setSelectedStage] = useState<PipelineStage>(pipelineStages[2]); // Default YOLO26
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [simActiveIndex, setSimActiveIndex] = useState<number | null>(null);
+  const revealRef = useReveal()
+  const [selectedStage, setSelectedStage] = useState<PipelineStage>(
+    pipelineStages[2],
+  ) // Default YOLO26
+  const [isSimulating, setIsSimulating] = useState(false)
+  const [simActiveIndex, setSimActiveIndex] = useState<number | null>(null)
 
   const startSimulation = () => {
-    if (isSimulating) return;
-    setIsSimulating(true);
+    if (isSimulating) return
+    setIsSimulating(true)
     pipelineStages.forEach((_, idx) => {
       setTimeout(() => {
-        setSimActiveIndex(idx);
-        setSelectedStage(pipelineStages[idx]);
-      }, idx * 350);
-    });
+        setSimActiveIndex(idx)
+        setSelectedStage(pipelineStages[idx])
+      }, idx * 350)
+    })
 
-    setTimeout(() => {
-      setSimActiveIndex(null);
-      setIsSimulating(false);
-    }, pipelineStages.length * 350 + 600);
-  };
+    setTimeout(
+      () => {
+        setSimActiveIndex(null)
+        setIsSimulating(false)
+      },
+      pipelineStages.length * 350 + 600,
+    )
+  }
 
   return (
-    <div ref={revealRef as React.Ref<HTMLDivElement>} className="bg-[#F7F8FA] text-[#111827]">
+    <div
+      ref={revealRef as React.Ref<HTMLDivElement>}
+      className="bg-[#F7F8FA] text-[#111827]"
+    >
       {/* ── HEADER SECTION ── */}
       <section className="border-b border-[#E5E7EB] bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 lg:py-16">
@@ -235,31 +250,51 @@ export default function Architecture() {
               System Architecture
             </h1>
             <p className="mt-4 text-base sm:text-lg text-[#4B5563] leading-relaxed">
-              A high-throughput, air-gapped visual analytics pipeline. Eight decoupled stages process raw video streams into verified biometric alerts in <strong>under 22 milliseconds</strong> on edge CPUs.
+              A high-throughput, air-gapped visual analytics pipeline. Eight
+              decoupled stages process raw video streams into verified biometric
+              alerts in <strong>under 22 milliseconds</strong> on edge CPUs.
             </p>
           </div>
 
           {/* Quick Metrics Ribbon */}
           <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4 border-t border-[#E5E7EB] pt-6 font-mono text-xs">
             <div className="p-3 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB]">
-              <span className="text-[#6B7280] block text-[11px]">PIPELINE LATENCY</span>
+              <span className="text-[#6B7280] block text-[11px]">
+                PIPELINE LATENCY
+              </span>
               <span className="text-green-600 font-bold text-lg">21.8 ms</span>
-              <span className="text-[10px] text-[#9CA3AF] block">Camera to Decision</span>
+              <span className="text-[10px] text-[#9CA3AF] block">
+                Camera to Decision
+              </span>
             </div>
             <div className="p-3 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB]">
-              <span className="text-[#6B7280] block text-[11px]">HARDWARE FOOTPRINT</span>
+              <span className="text-[#6B7280] block text-[11px]">
+                HARDWARE FOOTPRINT
+              </span>
               <span className="text-blue-600 font-bold text-lg">CPU Only</span>
-              <span className="text-[10px] text-[#9CA3AF] block">Zero GPU required</span>
+              <span className="text-[10px] text-[#9CA3AF] block">
+                Zero GPU required
+              </span>
             </div>
             <div className="p-3 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB]">
-              <span className="text-[#6B7280] block text-[11px]">OBJECT DETECTOR</span>
-              <span className="text-green-600 font-bold text-lg">YOLO26 Nano</span>
-              <span className="text-[10px] text-[#9CA3AF] block">Native NMS-Free</span>
+              <span className="text-[#6B7280] block text-[11px]">
+                OBJECT DETECTOR
+              </span>
+              <span className="text-green-600 font-bold text-lg">
+                YOLO26 Nano
+              </span>
+              <span className="text-[10px] text-[#9CA3AF] block">
+                Native NMS-Free
+              </span>
             </div>
             <div className="p-3 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB]">
-              <span className="text-[#6B7280] block text-[11px]">VECTOR SPACE</span>
+              <span className="text-[#6B7280] block text-[11px]">
+                VECTOR SPACE
+              </span>
               <span className="text-purple-600 font-bold text-lg">512-D</span>
-              <span className="text-[10px] text-[#9CA3AF] block">ArcFace Cosine Space</span>
+              <span className="text-[10px] text-[#9CA3AF] block">
+                ArcFace Cosine Space
+              </span>
             </div>
           </div>
         </div>
@@ -277,7 +312,8 @@ export default function Architecture() {
                 Sequential Data Processing Flow
               </h2>
               <p className="text-xs text-[#6B7280] font-mono mt-1">
-                Click any component to inspect its data contract, latency budget, and algorithmic logic.
+                Click any component to inspect its data contract, latency
+                budget, and algorithmic logic.
               </p>
             </div>
 
@@ -286,20 +322,24 @@ export default function Architecture() {
               disabled={isSimulating}
               className={`inline-flex items-center gap-2 rounded-lg px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                 isSimulating
-                  ? 'bg-green-100 text-green-800 border border-green-300'
-                  : 'bg-[#111827] text-white hover:bg-green-600'
+                  ? "bg-green-100 text-green-800 border border-green-300"
+                  : "bg-[#111827] text-white hover:bg-green-600"
               }`}
             >
-              <span className={`h-2 w-2 rounded-full ${isSimulating ? 'bg-green-500 animate-ping' : 'bg-green-400'}`} />
-              {isSimulating ? 'Simulating Frame...' : '▶ Simulate Frame Flow'}
+              <span
+                className={`h-2 w-2 rounded-full ${
+                  isSimulating ? "bg-green-500 animate-ping" : "bg-green-400"
+                }`}
+              />
+              {isSimulating ? "Simulating Frame..." : "▶ Simulate Frame Flow"}
             </button>
           </div>
 
           {/* Interactive Stage Buttons Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
             {pipelineStages.map((stage, idx) => {
-              const isSelected = selectedStage.id === stage.id;
-              const isSimActive = simActiveIndex === idx;
+              const isSelected = selectedStage.id === stage.id
+              const isSimActive = simActiveIndex === idx
 
               return (
                 <button
@@ -307,10 +347,10 @@ export default function Architecture() {
                   onClick={() => setSelectedStage(stage)}
                   className={`flex flex-col justify-between rounded-xl border p-3.5 text-left transition-all cursor-pointer min-h-[110px] ${
                     isSimActive
-                      ? 'border-green-500 bg-green-50 shadow-md ring-2 ring-green-400/50 scale-105'
+                      ? "border-green-500 bg-green-50 shadow-md ring-2 ring-green-400/50 scale-105"
                       : isSelected
-                      ? 'border-[#111827] bg-[#F9FAFB] shadow-sm ring-1 ring-black/10'
-                      : 'border-[#E5E7EB] bg-white hover:border-gray-300 hover:bg-[#F9FAFB]'
+                        ? "border-[#111827] bg-[#F9FAFB] shadow-sm ring-1 ring-black/10"
+                        : "border-[#E5E7EB] bg-white hover:border-gray-300 hover:bg-[#F9FAFB]"
                   }`}
                 >
                   <div className="flex items-center justify-between w-full">
@@ -333,12 +373,16 @@ export default function Architecture() {
 
                   <div className="w-full bg-gray-100 h-1 rounded-full overflow-hidden mt-1">
                     <div
-                      className={`h-full ${isSelected || isSimActive ? 'bg-green-500' : 'bg-gray-300'}`}
-                      style={{ width: '100%' }}
+                      className={`h-full ${
+                        isSelected || isSimActive
+                          ? "bg-green-500"
+                          : "bg-gray-300"
+                      }`}
+                      style={{ width: "100%" }}
                     />
                   </div>
                 </button>
-              );
+              )
             })}
           </div>
 
@@ -354,8 +398,18 @@ export default function Architecture() {
                 </h3>
               </div>
               <div className="flex items-center gap-4 text-xs">
-                <span className="text-[#94A3B8]">Execution: <strong className="text-green-400">{selectedStage.latency}</strong></span>
-                <span className="text-[#94A3B8]">Footprint: <strong className="text-[#38BDF8]">{selectedStage.memory}</strong></span>
+                <span className="text-[#94A3B8]">
+                  Execution:{" "}
+                  <strong className="text-green-400">
+                    {selectedStage.latency}
+                  </strong>
+                </span>
+                <span className="text-[#94A3B8]">
+                  Footprint:{" "}
+                  <strong className="text-[#38BDF8]">
+                    {selectedStage.memory}
+                  </strong>
+                </span>
               </div>
             </div>
 
@@ -365,17 +419,27 @@ export default function Architecture() {
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2 text-xs">
               <div className="p-3.5 rounded-lg bg-white/[0.03] border border-white/5">
-                <span className="text-[#64748B] block text-[10px] uppercase font-bold">Input Data Contract</span>
-                <span className="text-[#E2E8F0] mt-1 block">{selectedStage.input}</span>
+                <span className="text-[#64748B] block text-[10px] uppercase font-bold">
+                  Input Data Contract
+                </span>
+                <span className="text-[#E2E8F0] mt-1 block">
+                  {selectedStage.input}
+                </span>
               </div>
               <div className="p-3.5 rounded-lg bg-white/[0.03] border border-white/5">
-                <span className="text-[#64748B] block text-[10px] uppercase font-bold">Output Data Contract</span>
-                <span className="text-green-400 mt-1 block font-semibold">{selectedStage.output}</span>
+                <span className="text-[#64748B] block text-[10px] uppercase font-bold">
+                  Output Data Contract
+                </span>
+                <span className="text-green-400 mt-1 block font-semibold">
+                  {selectedStage.output}
+                </span>
               </div>
             </div>
 
             <div className="mt-5 border-t border-white/10 pt-4">
-              <span className="text-[10px] uppercase text-[#64748B] font-bold block mb-2">Technical Highlights & Architecture Logic</span>
+              <span className="text-[10px] uppercase text-[#64748B] font-bold block mb-2">
+                Technical Highlights & Architecture Logic
+              </span>
               <ul className="space-y-1.5 text-xs text-[#94A3B8]">
                 {selectedStage.details.map((detail, idx) => (
                   <li key={idx} className="flex items-start gap-2">
@@ -400,7 +464,8 @@ export default function Architecture() {
               Technology Selection Rationale
             </h2>
             <p className="mt-3 text-sm text-[#4B5563]">
-              Every dependency in IBVAP-Lite was deliberately chosen for low latency, zero cloud dependency, and rock-solid edge stability.
+              Every dependency in IBVAP-Lite was deliberately chosen for low
+              latency, zero cloud dependency, and rock-solid edge stability.
             </p>
           </div>
 
@@ -409,14 +474,23 @@ export default function Architecture() {
               <thead className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-[11px] text-[#6B7280] uppercase">
                 <tr>
                   <th className="px-5 py-3.5 font-bold">Subsystem</th>
-                  <th className="px-5 py-3.5 font-bold text-green-700">IBVAP-Lite Stack</th>
-                  <th className="px-5 py-3.5 font-bold text-[#6B7280]">Alternative</th>
-                  <th className="px-5 py-3.5 font-bold">Architectural Trade-Off Rationale</th>
+                  <th className="px-5 py-3.5 font-bold text-green-700">
+                    IBVAP-Lite Stack
+                  </th>
+                  <th className="px-5 py-3.5 font-bold text-[#6B7280]">
+                    Alternative
+                  </th>
+                  <th className="px-5 py-3.5 font-bold">
+                    Architectural Trade-Off Rationale
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E5E7EB] text-[#374151]">
                 {techStack.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-[#F9FAFB]/80 transition-colors">
+                  <tr
+                    key={idx}
+                    className="hover:bg-[#F9FAFB]/80 transition-colors"
+                  >
                     <td className="px-5 py-3.5 font-bold text-[#111827] whitespace-nowrap">
                       {row.layer}
                     </td>
@@ -450,7 +524,11 @@ export default function Architecture() {
                   Zero Telemetry Leaked. 100% On-Premises.
                 </h3>
                 <p className="mt-4 text-sm sm:text-base text-[#94A3B8] leading-relaxed">
-                  Traditional surveillance software streams video frames to external third-party cloud GPUs for inference, creating severe national security vulnerabilities. IBVAP-Lite performs all detection, matching, and logging directly inside the physical perimeter gateway.
+                  Traditional surveillance software streams video frames to
+                  external third-party cloud GPUs for inference, creating severe
+                  national security vulnerabilities. IBVAP-Lite performs all
+                  detection, matching, and logging directly inside the physical
+                  perimeter gateway.
                 </p>
 
                 <div className="mt-6 flex flex-wrap gap-4 font-mono text-xs">
@@ -489,7 +567,9 @@ export default function Architecture() {
                   </div>
                   <div className="flex justify-between">
                     <span>Network Egress:</span>
-                    <span className="text-green-400">0 KB/s (Strict Air-Gap)</span>
+                    <span className="text-green-400">
+                      0 KB/s (Strict Air-Gap)
+                    </span>
                   </div>
                 </div>
 
@@ -505,5 +585,5 @@ export default function Architecture() {
         </div>
       </section>
     </div>
-  );
+  )
 }

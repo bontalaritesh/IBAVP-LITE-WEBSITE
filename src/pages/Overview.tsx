@@ -1,13 +1,25 @@
-import { Link } from 'react-router';
-import { useEffect, useRef, useState } from 'react';
-import AsciiEyeCamera from '../components/AsciiEyeCamera';
+import { Link } from "react-router"
+import { useEffect, useRef, useState } from "react"
+import AsciiEyeCamera from "../components/AsciiEyeCamera"
 
-function Arrow({ className = '' }: { className?: string }) {
+function Arrow({ className = "" }: { className?: string }) {
   return (
-    <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <path d="M4 12h15M13 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg
+      className={className}
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <path
+        d="M4 12h15M13 5l7 7-7 7"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
-  );
+  )
 }
 
 function Marker({ text }: { text: string }) {
@@ -16,52 +28,71 @@ function Marker({ text }: { text: string }) {
       <i className="block h-2 w-2 rounded-full bg-green-500 animate-pulse" />
       {text}
     </span>
-  );
+  )
 }
 
-function RevealNumber({ value, label, sub }: { value: string; label: string; sub?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [seen, setSeen] = useState(false);
+function RevealNumber({
+  value,
+  label,
+  sub,
+}: {
+  value: string
+  label: string
+  sub?: string
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [seen, setSeen] = useState(false)
 
   useEffect(() => {
-    const n = ref.current;
-    if (!n) return;
-    const o = new IntersectionObserver(([e]) => e.isIntersecting && setSeen(true), { threshold: 0.3 });
-    o.observe(n);
-    return () => o.disconnect();
-  }, []);
+    const n = ref.current
+    if (!n) return
+    const o = new IntersectionObserver(
+      ([e]) => e.isIntersecting && setSeen(true),
+      { threshold: 0.3 },
+    )
+    o.observe(n)
+    return () => o.disconnect()
+  }, [])
 
   return (
     <div ref={ref} className="border-t border-white/15 pt-5">
-      <div className={`metric-number transition-all duration-700 ${seen ? 'metric-show' : 'opacity-0 translate-y-4'}`}>
+      <div
+        className={`metric-number transition-all duration-700 ${
+          seen ? "metric-show" : "opacity-0 translate-y-4"
+        }`}
+      >
         {value}
       </div>
-      <div className="mt-2 font-mono text-xs font-semibold tracking-wider text-white uppercase">{label}</div>
-      {sub && <div className="mt-1 font-mono text-[11px] text-white/50">{sub}</div>}
+      <div className="mt-2 font-mono text-xs font-semibold tracking-wider text-white uppercase">
+        {label}
+      </div>
+      {sub && (
+        <div className="mt-1 font-mono text-[11px] text-white/50">{sub}</div>
+      )}
     </div>
-  );
+  )
 }
 
 const capabilities = [
   {
-    num: '01',
-    title: 'SEE',
-    subtitle: 'YOLO26 Nano Perception',
-    desc: 'Native NMS-free end-to-end detection tracks humans and perimeter vehicles at 45+ FPS directly on edge CPUs without cloud latency.',
+    num: "01",
+    title: "SEE",
+    subtitle: "YOLO26 Nano Perception",
+    desc: "Native NMS-free end-to-end detection tracks humans and perimeter vehicles at 45+ FPS directly on edge CPUs without cloud latency.",
   },
   {
-    num: '02',
-    title: 'IDENTIFY',
-    subtitle: 'ArcFace 512-D Exemplars',
-    desc: '360° multi-angle exemplar gallery matches frontal, profile, and oblique viewpoints with sub-millisecond cosine distance matrix calculations.',
+    num: "02",
+    title: "IDENTIFY",
+    subtitle: "ArcFace 512-D Exemplars",
+    desc: "360° multi-angle exemplar gallery matches frontal, profile, and oblique viewpoints with sub-millisecond cosine distance matrix calculations.",
   },
   {
-    num: '03',
-    title: 'ACT',
-    subtitle: 'Autonomous Threat Push',
-    desc: 'Zero-lag verification gate triggers tiered alerts and pushes forensic photos to field commanders via Telegram in <1 second.',
+    num: "03",
+    title: "ACT",
+    subtitle: "Autonomous Threat Push",
+    desc: "Zero-lag verification gate triggers tiered alerts and pushes forensic photos to field commanders via Telegram in <1 second.",
   },
-];
+]
 
 export default function Overview() {
   return (
@@ -80,12 +111,16 @@ export default function Overview() {
                   UPGRADED TO YOLO26n // NMS-FREE
                 </div>
                 <h1 className="mt-4 font-sans text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#111827] leading-[1.02]">
-                  SEE WHAT<br />
-                  <span className="text-green-600">MATTERS.</span><br />
+                  SEE WHAT
+                  <br />
+                  <span className="text-green-600">MATTERS.</span>
+                  <br />
                   WHERE IT HAPPENS.
                 </h1>
                 <p className="mt-6 max-w-lg text-base sm:text-lg leading-relaxed text-[#4B5563]">
-                  IBVAP-Lite is an edge-native, zero-cloud visual intelligence engine. It transforms raw border CCTV and IP camera feeds into instant, actionable security alerts in under 1 second.
+                  IBVAP-Lite is an edge-native, zero-cloud visual intelligence
+                  engine. It transforms raw border CCTV and IP camera feeds into
+                  instant, actionable security alerts in under 1 second.
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-3.5">
@@ -107,7 +142,9 @@ export default function Overview() {
 
             <div className="mt-10 flex items-center justify-between border-t border-[#E5E7EB] pt-4 font-mono text-[11px] text-[#6B7280]">
               <span>LOCAL CPU INFERENCE • ZERO CLOUD LEAKAGE</span>
-              <span className="text-green-600 font-bold">100% AIR-GAPPED READY</span>
+              <span className="text-green-600 font-bold">
+                100% AIR-GAPPED READY
+              </span>
             </div>
           </div>
 
@@ -118,7 +155,9 @@ export default function Overview() {
                 <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
                 TACTICAL RADAR VIEWPORT
               </span>
-              <span className="text-green-400">INTERACTIVE JETBRAINS ASCII ENGINE</span>
+              <span className="text-green-400">
+                INTERACTIVE JETBRAINS ASCII ENGINE
+              </span>
             </div>
 
             <AsciiEyeCamera className="w-full" />
@@ -129,7 +168,9 @@ export default function Overview() {
                 <span>CPU PIPELINE</span>
               </div>
               <div>
-                <span className="block text-green-400 font-bold">&lt;1.0 SEC</span>
+                <span className="block text-green-400 font-bold">
+                  &lt;1.0 SEC
+                </span>
                 <span>ALERT LATENCY</span>
               </div>
               <div>
@@ -144,7 +185,10 @@ export default function Overview() {
       {/* ── TICKER STRIP ── */}
       <div className="ticker border-b border-black bg-green-500 py-2.5 font-mono text-xs font-bold tracking-[.18em] text-black select-none">
         <div>
-          ✦ FAST EDGE DETECTION &nbsp;&nbsp; ✦ ZERO CLOUD DEPENDENCY &nbsp;&nbsp; ✦ 360° MULTI-ANGLE BIOMETRICS &nbsp;&nbsp; ✦ REAL-TIME TELEGRAM DISPATCH &nbsp;&nbsp; ✦ NATIVE YOLO26 &nbsp;&nbsp; ✦ FAST EDGE DETECTION &nbsp;&nbsp; ✦ ZERO CLOUD DEPENDENCY &nbsp;&nbsp; ✦
+          ✦ FAST EDGE DETECTION &nbsp;&nbsp; ✦ ZERO CLOUD DEPENDENCY
+          &nbsp;&nbsp; ✦ 360° MULTI-ANGLE BIOMETRICS &nbsp;&nbsp; ✦ REAL-TIME
+          TELEGRAM DISPATCH &nbsp;&nbsp; ✦ NATIVE YOLO26 &nbsp;&nbsp; ✦ FAST
+          EDGE DETECTION &nbsp;&nbsp; ✦ ZERO CLOUD DEPENDENCY &nbsp;&nbsp; ✦
         </div>
       </div>
 
@@ -157,7 +201,9 @@ export default function Overview() {
               Human Fatigue vs Autonomous Vigilance
             </h2>
             <p className="mt-3 text-base text-[#4B5563]">
-              Border security guards watching 16+ CCTV feeds miss up to 95% of target sightings after 22 minutes. IBVAP-Lite replaces fatigue with continuous mathematical certainty.
+              Border security guards watching 16+ CCTV feeds miss up to 95% of
+              target sightings after 22 minutes. IBVAP-Lite replaces fatigue
+              with continuous mathematical certainty.
             </p>
           </div>
 
@@ -165,25 +211,43 @@ export default function Overview() {
             {/* Manual Monitoring Card */}
             <div className="rounded-xl border border-red-200 bg-red-50/40 p-6 sm:p-8">
               <div className="flex items-center justify-between border-b border-red-200 pb-3">
-                <span className="font-mono text-xs font-bold uppercase text-red-600">Conventional Human Monitoring</span>
-                <span className="rounded bg-red-100 px-2 py-0.5 font-mono text-[10px] font-bold text-red-700">HIGH RISK</span>
+                <span className="font-mono text-xs font-bold uppercase text-red-600">
+                  Conventional Human Monitoring
+                </span>
+                <span className="rounded bg-red-100 px-2 py-0.5 font-mono text-[10px] font-bold text-red-700">
+                  HIGH RISK
+                </span>
               </div>
               <ul className="mt-5 space-y-4 font-mono text-xs text-[#374151]">
                 <li className="flex items-start gap-2.5">
                   <span className="text-red-500 font-bold">✕</span>
-                  <span><strong>Attention Decay:</strong> 95% detection failure rate after 20 minutes of continuous screen monitoring.</span>
+                  <span>
+                    <strong>Attention Decay:</strong> 95% detection failure rate
+                    after 20 minutes of continuous screen monitoring.
+                  </span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-red-500 font-bold">✕</span>
-                  <span><strong>Costly Infrastructure:</strong> Requires server racks with expensive high-wattage GPUs ($5,000+ per station).</span>
+                  <span>
+                    <strong>Costly Infrastructure:</strong> Requires server
+                    racks with expensive high-wattage GPUs ($5,000+ per
+                    station).
+                  </span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-red-500 font-bold">✕</span>
-                  <span><strong>Cloud Vulnerability:</strong> Streaming sensitive border feeds over public internet introduces cyber interception risks.</span>
+                  <span>
+                    <strong>Cloud Vulnerability:</strong> Streaming sensitive
+                    border feeds over public internet introduces cyber
+                    interception risks.
+                  </span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-red-500 font-bold">✕</span>
-                  <span><strong>Response Lag:</strong> 2 to 5 minutes between spotting an intruder and alerting border response personnel.</span>
+                  <span>
+                    <strong>Response Lag:</strong> 2 to 5 minutes between
+                    spotting an intruder and alerting border response personnel.
+                  </span>
                 </li>
               </ul>
             </div>
@@ -191,25 +255,44 @@ export default function Overview() {
             {/* IBVAP-Lite Card */}
             <div className="rounded-xl border border-green-300 bg-green-50/40 p-6 sm:p-8 shadow-sm">
               <div className="flex items-center justify-between border-b border-green-200 pb-3">
-                <span className="font-mono text-xs font-bold uppercase text-green-700">IBVAP-Lite Edge Autonomous AI</span>
-                <span className="rounded bg-green-200/70 px-2 py-0.5 font-mono text-[10px] font-bold text-green-800">RECOMMENDED</span>
+                <span className="font-mono text-xs font-bold uppercase text-green-700">
+                  IBVAP-Lite Edge Autonomous AI
+                </span>
+                <span className="rounded bg-green-200/70 px-2 py-0.5 font-mono text-[10px] font-bold text-green-800">
+                  RECOMMENDED
+                </span>
               </div>
               <ul className="mt-5 space-y-4 font-mono text-xs text-[#1F2937]">
                 <li className="flex items-start gap-2.5">
                   <span className="text-green-600 font-bold">✓</span>
-                  <span><strong>Tireless Vigilance:</strong> Evaluates every single frame 24/7 without cognitive fatigue or missed events.</span>
+                  <span>
+                    <strong>Tireless Vigilance:</strong> Evaluates every single
+                    frame 24/7 without cognitive fatigue or missed events.
+                  </span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-green-600 font-bold">✓</span>
-                  <span><strong>Commodity Hardware:</strong> Runs at 45+ FPS on standard Intel Core i5 edge mini-PCs with zero GPUs required.</span>
+                  <span>
+                    <strong>Commodity Hardware:</strong> Runs at 45+ FPS on
+                    standard Intel Core i5 edge mini-PCs with zero GPUs
+                    required.
+                  </span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-green-600 font-bold">✓</span>
-                  <span><strong>Air-Gapped Privacy:</strong> 100% of inference, embedding extraction, and SQLite logging stays strictly on-premise.</span>
+                  <span>
+                    <strong>Air-Gapped Privacy:</strong> 100% of inference,
+                    embedding extraction, and SQLite logging stays strictly
+                    on-premise.
+                  </span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-green-600 font-bold">✓</span>
-                  <span><strong>Sub-Second Dispatch:</strong> Verified threats pushed to Telegram and web radar in under 1 second with evidence crops.</span>
+                  <span>
+                    <strong>Sub-Second Dispatch:</strong> Verified threats
+                    pushed to Telegram and web radar in under 1 second with
+                    evidence crops.
+                  </span>
                 </li>
               </ul>
             </div>
@@ -239,8 +322,12 @@ export default function Overview() {
                 className="group border-b border-white/15 p-6 sm:p-8 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 transition-colors hover:bg-white/[0.02]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs text-green-400 font-bold">{cap.num}</span>
-                  <span className="font-mono text-[10px] uppercase text-[#64748B]">{cap.subtitle}</span>
+                  <span className="font-mono text-xs text-green-400 font-bold">
+                    {cap.num}
+                  </span>
+                  <span className="font-mono text-[10px] uppercase text-[#64748B]">
+                    {cap.subtitle}
+                  </span>
                 </div>
                 <h3 className="mt-8 text-3xl sm:text-4xl font-bold tracking-tight text-white group-hover:text-green-400 transition-colors">
                   {cap.title}
@@ -265,19 +352,38 @@ export default function Overview() {
           <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_1.2fr]">
             <div>
               <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
-                PROVEN SPEEDS.<br />
+                PROVEN SPEEDS.
+                <br />
                 <span className="text-green-400">NO COMPROMISES.</span>
               </h2>
               <p className="mt-4 text-sm text-[#94A3B8] leading-relaxed max-w-md">
-                Benchmarked on standard 11th Gen Intel Core i5 processors using ONNX Runtime CPUExecutionProvider with multi-threaded SIMD acceleration.
+                Benchmarked on standard 11th Gen Intel Core i5 processors using
+                ONNX Runtime CPUExecutionProvider with multi-threaded SIMD
+                acceleration.
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-8 self-end">
-              <RevealNumber value="45+ FPS" label="Inference Throughput" sub="Zero GPU required" />
-              <RevealNumber value="<1.0s" label="Dispatch Latency" sub="Camera to Telegram" />
-              <RevealNumber value="512-D" label="Face Embedding Depth" sub="Normalized ArcFace" />
-              <RevealNumber value="100%" label="Local Persistence" sub="SQLite Audit Vault" />
+              <RevealNumber
+                value="45+ FPS"
+                label="Inference Throughput"
+                sub="Zero GPU required"
+              />
+              <RevealNumber
+                value="<1.0s"
+                label="Dispatch Latency"
+                sub="Camera to Telegram"
+              />
+              <RevealNumber
+                value="512-D"
+                label="Face Embedding Depth"
+                sub="Normalized ArcFace"
+              />
+              <RevealNumber
+                value="100%"
+                label="Local Persistence"
+                sub="SQLite Audit Vault"
+              />
             </div>
           </div>
         </div>
@@ -296,7 +402,8 @@ export default function Overview() {
             Inspect the Full System Architecture & Live Detections
           </h2>
           <p className="mt-4 max-w-xl text-base sm:text-lg text-black/80 leading-relaxed">
-            Ready to dive deeper? Explore the 8-stage data pipeline, examine real threat logs, or deploy the prototype in 3 terminal commands.
+            Ready to dive deeper? Explore the 8-stage data pipeline, examine
+            real threat logs, or deploy the prototype in 3 terminal commands.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
@@ -316,5 +423,5 @@ export default function Overview() {
         </div>
       </section>
     </div>
-  );
+  )
 }
