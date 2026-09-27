@@ -122,6 +122,7 @@ const operationalSteps: Step[] = [
 
 export default function HowItWorks() {
   const revealRef = useReveal();
+  const [activeStep, setActiveStep] = useState<number>(0);
   const [videoUrl, setVideoUrl] = useState<string>('https://www.youtube.com/embed/csDdD9fTyn0');
   const [localVideoSrc, setLocalVideoSrc] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
