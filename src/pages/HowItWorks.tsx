@@ -122,8 +122,7 @@ const operationalSteps: Step[] = [
 
 export default function HowItWorks() {
   const revealRef = useReveal();
-  const [activeStep, setActiveStep] = useState<number>(0);
-  const [videoUrl, setVideoUrl] = useState<string>('');
+  const [videoUrl, setVideoUrl] = useState<string>('https://www.youtube.com/embed/csDdD9fTyn0');
   const [localVideoSrc, setLocalVideoSrc] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -211,6 +210,17 @@ export default function HowItWorks() {
 
             {/* Video Action Controls */}
             <div className="flex flex-wrap items-center gap-2">
+              <a
+                href="https://youtu.be/csDdD9fTyn0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#FF0000]/90 hover:bg-[#FF0000] px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-white transition cursor-pointer shadow-md"
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                Watch on YouTube ↗
+              </a>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -220,9 +230,9 @@ export default function HowItWorks() {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-black transition hover:bg-green-500 cursor-pointer shadow-md"
+                className="inline-flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-white transition cursor-pointer"
               >
-                📁 Upload / Change Demo Video
+                📁 Local MP4
               </button>
             </div>
           </div>
@@ -244,7 +254,7 @@ export default function HowItWorks() {
                 src={videoUrl}
                 title="Prototype Demonstration Video"
                 className="h-full w-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
               />
             ) : (
